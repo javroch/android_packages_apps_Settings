@@ -172,7 +172,8 @@ public class DevelopmentSettings extends PreferenceFragment
 
     private void removeRootOptions() {
         // user builds don't get root, eng builds always do
-        // should i also be checking that ro.root.settings equals "0"?
+        // should i also be checking if ro.root.settings equals "0"
+        //   because if it is, no settings (to try and preserve AOSP's full_xxx targets)?
         if (!Build.IS_DEBUGGABLE || "eng".equals(Build.TYPE)) {
             Preference allowRoot = findPreference(ROOT_ACCESS_KEY);
             if (allowRoot != null) {
