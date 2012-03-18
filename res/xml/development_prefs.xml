@@ -22,6 +22,13 @@
         android:title="@string/enable_adb" 
         android:summary="@string/enable_adb_summary"/>
 
+    <ListPreference
+        android:key="root_access"
+        android:title="@string/root_access"
+        android:persistent="false"
+        android:entries="@array/root_access_entries"
+        android:entryValues="@array/root_access_values" />
+
     <Preference
         android:key="verifier_device_identifier"
         style="?android:attr/preferenceInformationStyle"
