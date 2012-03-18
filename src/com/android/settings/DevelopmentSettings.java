@@ -503,26 +503,6 @@ public class DevelopmentSettings extends PreferenceFragment
             writeShowAllANRsOptions();
         } else if (preference == mForceHardwareUi) {
             writeHardwareUiOptions();
-        } else if (preference == mRootAccess) {
-            if ("0".equals(SystemProperties.get(ROOT_ACCESS_PROPERTY, "1"))
-                && !"0".equals(newValue)) {
-
-                mSelectedRootValue = newValue;
-                mOKClicked = false;
-                if (mOKDialog != null) dismissDialog();
-                mOKDialog = new AlertDialog.Builder(getActivity()).setMessage(
-                    getResources().getString(R.string.root_access_warning_message))
-                    .setTitle(R.string.root_access_warning_title)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(android.R.string.yes, this)
-                    .setNegativeButton(android.R.string.no, this)
-                    .show();
-                mCurrentDialog = ROOT_ACCESS_KEY;
-                mOKDialog.setOnDismissListener(this);
-            } else {
-                writeRootAccessOptions(newValue);
-            }
-            return true;
         }
 
         return false;
@@ -542,6 +522,26 @@ public class DevelopmentSettings extends PreferenceFragment
             return true;
         } else if (preference == mAppProcessLimit) {
             writeAppProcessLimitOptions(newValue);
+            return true;
+        } else if (preference == mRootAccess) {
+            if ("0".equals(SystemProperties.get(ROOT_ACCESS_PROPERTY, "1"))
+                && !"0".equals(newValue)) {
+
+                mSelectedRootValue = newValue;
+                mOKClicked = false;
+                if (mOKDialog != null) dismissDialog();
+                mOKDialog = new AlertDialog.Builder(getActivity()).setMessage(
+                    getResources().getString(R.string.root_access_warning_message))
+                    .setTitle(R.string.root_access_warning_title)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, this)
+                    .setNegativeButton(android.R.string.no, this)
+                    .show();
+                mCurrentDialog = ROOT_ACCESS_KEY;
+                mOKDialog.setOnDismissListener(this);
+            } else {
+                writeRootAccessOptions(newValue);
+            }
             return true;
         }
         return false;
