@@ -528,9 +528,9 @@ public class DevelopmentSettings extends PreferenceFragment
                 && !"0".equals(newValue)) {
 
                 mSelectedRootValue = newValue;
-                mOKClicked = false;
-                if (mOKDialog != null) dismissDialog();
-                mOKDialog = new AlertDialog.Builder(getActivity()).setMessage(
+                mOkClicked = false;
+                if (mOkDialog != null) dismissDialog();
+                mOkDialog = new AlertDialog.Builder(getActivity()).setMessage(
                     getResources().getString(R.string.root_access_warning_message))
                     .setTitle(R.string.root_access_warning_title)
                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -538,7 +538,7 @@ public class DevelopmentSettings extends PreferenceFragment
                     .setNegativeButton(android.R.string.no, this)
                     .show();
                 mCurrentDialog = ROOT_ACCESS_KEY;
-                mOKDialog.setOnDismissListener(this);
+                mOkDialog.setOnDismissListener(this);
             } else {
                 writeRootAccessOptions(newValue);
             }
