@@ -73,6 +73,7 @@ public class DevelopmentSettings extends PreferenceFragment
 
     private static final String ROOT_ACCESS_KEY = "root_access";
     private static final String ROOT_ACCESS_PROPERTY = "persist.sys.root_access";
+    private static final String ROOT_SETTINGS_PROPERTY = "ro.root.settings";
 
     private static final String IMMEDIATELY_DESTROY_ACTIVITIES_KEY
             = "immediately_destroy_activities";
@@ -171,10 +172,9 @@ public class DevelopmentSettings extends PreferenceFragment
     }
 
     private void removeRootOptions() {
-        // user builds don't get root, eng builds always do
-        // should i also be checking if ro.root.settings equals "0" or ""
-        //   because if it is, no settings (to try and preserve AOSP's full_xxx targets)?
-        if (!Build.IS_DEBUGGABLE || "eng".equals(Build.TYPE)) {
+        // user builds don't get root, eng builds always do, only include the setting if we want it there
+        String root_settings = SystemProperties.get(ROOT_SETTINGS_PROPERTY, "");
+        if (!Build.IS_DEBUGGABLE || "eng".equals(Build.TYPE) || !"1".equals(root_settings)) {
             Preference allowRoot = findPreference(ROOT_ACCESS_KEY);
             if (allowRoot != null) {
                 getPreferenceScreen().removePreference(allowRoot);
