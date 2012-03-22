@@ -75,6 +75,7 @@ public class DevelopmentSettings extends PreferenceFragment
     private static final String ROOT_ACCESS_PROPERTY = "persist.sys.root_access";
     private static final String ROOT_ACCESS_DEFAULT = "0";
     private static final String ROOT_SETTINGS_PROPERTY = "ro.root.settings";
+    private static final String ROOT_SETTINGS_DEFAULT_PROPERTY = "ro.root.settings.default";
 
     private static final String IMMEDIATELY_DESTROY_ACTIVITIES_KEY
             = "immediately_destroy_activities";
@@ -286,13 +287,19 @@ public class DevelopmentSettings extends PreferenceFragment
     }
 
     private void updateRootAccessOptions() {
-        String value = SystemProperties.get(ROOT_ACCESS_PROPERTY, ROOT_ACCESS_DEFAULT);
+        // this way i can change the default value from vendor
+        String settingDefault = SystemProperties.get(ROOT_SETTINGS_DEFAULT_PROPERTY, ROOT_ACCESS_DEFAULT);
+
+        String value = SystemProperties.get(ROOT_ACCESS_PROPERTY, settingDefault);
         mRootAccess.setValue(value);
         mRootAccess.setSummary(getResources().getStringArray(R.array.root_access_entries)[Integer.valueOf(value)]);
     }
 
     private void writeRootAccessOptions(Object newValue) {
-        String oldValue = SystemProperties.get(ROOT_ACCESS_PROPERTY, ROOT_ACCESS_DEFAULT);
+        // this way i can change the default value from vendor
+        String settingDefault = SystemProperties.get(ROOT_SETTINGS_DEFAULT_PROPERTY, ROOT_ACCESS_DEFAULT);
+
+        String oldValue = SystemProperties.get(ROOT_ACCESS_PROPERTY, settingDefault);
         SystemProperties.set(ROOT_ACCESS_PROPERTY, newValue.toString());
         if (Integer.valueOf(newValue.toString()) < 2 && !oldValue.equals(newValue)
             && "1".equals(SystemProperties.get("service.adb.root", "0"))) {
@@ -525,7 +532,10 @@ public class DevelopmentSettings extends PreferenceFragment
             writeAppProcessLimitOptions(newValue);
             return true;
         } else if (preference == mRootAccess) {
-            if ("0".equals(SystemProperties.get(ROOT_ACCESS_PROPERTY, ROOT_ACCESS_DEFAULT))
+            // this way i can change the default value from vendor
+            String settingDefault = SystemProperties.get(ROOT_SETTINGS_DEFAULT_PROPERTY, ROOT_ACCESS_DEFAULT);
+
+            if ("0".equals(SystemProperties.get(ROOT_ACCESS_PROPERTY, settingDefault))
                 && !"0".equals(newValue)) {
 
                 mSelectedRootValue = newValue;
