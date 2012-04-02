@@ -81,6 +81,11 @@ public class DevelopmentSettings extends PreferenceFragment
     private static final String REBOOT_OPTION_DEFAULT = "0";
     private static final String REBOOT_SETTINGS_PROPERTY = "ro.clean.reboot";
 
+    private static final String SCREENSHOT_OPTION_KEY = "screenshot_option";
+    private static final String SCREENSHOT_OPTION_DEFAULT = "false";
+    private static final String SCREENSHOT_OPTION_PROPERTY = "persist.sys.clean.screenshot";
+    private static final String SCREENSHOT_SETTINGS_PROPERTY = "ro.clean.screenshot";
+
     private static final String IMMEDIATELY_DESTROY_ACTIVITIES_KEY
             = "immediately_destroy_activities";
     private static final String APP_PROCESS_LIMIT_KEY = "app_process_limit";
@@ -111,6 +116,7 @@ public class DevelopmentSettings extends PreferenceFragment
 
     private ListPreference mRootAccess;
     private ListPreference mRebootOption;
+    private CheckBoxPreference mScreenshotOption;
 
     // To track whether Yes was clicked in the adb warning dialog
     private boolean mOkClicked;
@@ -160,6 +166,8 @@ public class DevelopmentSettings extends PreferenceFragment
         mRebootOption = (ListPreference) findPreference(REBOOT_OPTION_KEY);
         mRebootOption.setOnPreferenceChangeListener(this);
 
+        mScreenshotOption = (CheckBoxPreference) findPreference(SCREENSHOT_OPTION_KEY);
+
         final Preference verifierDeviceIdentifier = findPreference(VERIFIER_DEVICE_IDENTIFIER);
         final PackageManager pm = getActivity().getPackageManager();
         final VerifierDeviceIdentity verifierIndentity = pm.getVerifierDeviceIdentity();
@@ -169,6 +177,7 @@ public class DevelopmentSettings extends PreferenceFragment
 
         removeRootOptions();
         removeRebootOptions();
+        removeScreenshotOptions();
         removeHdcpOptionsForProduction();
     }
 
@@ -203,6 +212,16 @@ public class DevelopmentSettings extends PreferenceFragment
         }
     }
 
+    private void removeScreenshotOptions() {
+        String screenshot_settings = SystemProperties.get(SCREENSHOT_SETTINGS_PROPERTY, "");
+        if (!"1".equals(screenshot_settings)) {
+            Preference allowScreenshot = findPreference(SCREENSHOT_OPTION_KEY);
+            if (allowScreenshot != null) {
+                getPreferenceScreen().removePreference(allowScreenshot);
+            }
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -228,6 +247,7 @@ public class DevelopmentSettings extends PreferenceFragment
         updateShowAllANRsOptions();
         updateRootAccessOptions();
         updateRebootOptionOptions();
+        updateScreenshotOptionOptions();
     }
 
     private void updateHdcpValues() {
@@ -318,6 +338,11 @@ public class DevelopmentSettings extends PreferenceFragment
         mRebootOption.setSummary(getResources().getStringArray(R.array.reboot_option_entries)[Integer.valueOf(value)]);
     }
 
+    private void updateScreenshotOptionOptions() {
+        String value = SystemProperties.get(SCREENSHOT_OPTION_PROPERTY, SCREENSHOT_OPTION_DEFAULT);
+        mScreenshotOption.setChecked(Boolean.parseBoolean(value));
+    }
+
     private void writeRootAccessOptions(Object newValue) {
         String oldValue = SystemProperties.get(ROOT_ACCESS_PROPERTY, ROOT_ACCESS_DEFAULT);
         SystemProperties.set(ROOT_ACCESS_PROPERTY, newValue.toString());
@@ -334,9 +359,13 @@ public class DevelopmentSettings extends PreferenceFragment
     }
 
     private void writeRebootOptionOptions(Object newValue) {
-        String oldValue = SystemProperties.get(REBOOT_OPTION_PROPERTY, REBOOT_OPTION_DEFAULT);
         SystemProperties.set(REBOOT_OPTION_PROPERTY, newValue.toString());
         updateRebootOptionOptions();
+    }
+
+    private void writeScreenshotOptionOptions() {
+        SystemProperties.set(SCREENSHOT_OPTION_PROPERTY, mScreenshotOption.isChecked() ? "true" : "false");
+        updateScreenshotOptionOptions();
     }
 
     private void updateFlingerOptions() {
@@ -537,6 +566,8 @@ public class DevelopmentSettings extends PreferenceFragment
             writeShowAllANRsOptions();
         } else if (preference == mForceHardwareUi) {
             writeHardwareUiOptions();
+        } else if (preference == mScreenshotOption) {
+            writeScreenshotOptionOptions();
         }
 
         return false;

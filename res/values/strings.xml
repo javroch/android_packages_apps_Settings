@@ -3797,4 +3797,7 @@ dangerous and could compromise the security of your system!</string>
     <string name="reboot_option_none">Disabled</string>
     <string name="reboot_option_button">Button</string>
     <string name="reboot_option_menu">Menu</string>
+
+    <!-- Setting checkbox title for screenshot option -->
+    <string name="screenshot_option">Screenshot option</string>
 </resources>
