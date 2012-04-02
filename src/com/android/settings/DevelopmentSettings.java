@@ -315,7 +315,7 @@ public class DevelopmentSettings extends PreferenceFragment
     private void updateRebootOptionOptions() {
         String value = SystemProperties.get(REBOOT_OPTION_PROPERTY, REBOOT_OPTION_DEFAULT);
         mRebootOption.setValue(value);
-        mRebootOption.setSummary(getResources().getStringArray(r.array.reboot_option_entries)[Integer.valueOf(value)]);
+        mRebootOption.setSummary(getResources().getStringArray(R.array.reboot_option_entries)[Integer.valueOf(value)]);
     }
 
     private void writeRootAccessOptions(Object newValue) {
@@ -579,7 +579,7 @@ public class DevelopmentSettings extends PreferenceFragment
             return true;
         }
         else if (preference == mRebootOption) {
-            writeRebootOptionOptions(value);
+            writeRebootOptionOptions(newValue);
             return true;
         }
         return false;
