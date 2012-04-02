@@ -3791,4 +3791,10 @@ dangerous and could compromise the security of your system!</string>
     <string name="root_access_apps">Apps only</string>
     <string name="root_access_adb">ADB only</string>
     <string name="root_access_all">Apps and ADB</string>
+
+    <!-- Setting checkbox title for reboot option -->
+    <string name="reboot_option">Reboot option</string>
+    <string name="reboot_option_none">Disabled</string>
+    <string name="reboot_option_button">Button</string>
+    <string name="reboot_option_menu">Menu</string>
 </resources>

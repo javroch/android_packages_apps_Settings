@@ -76,6 +76,11 @@ public class DevelopmentSettings extends PreferenceFragment
     private static final String ROOT_ACCESS_DEFAULT = "0";
     private static final String ROOT_SETTINGS_PROPERTY = "ro.root.settings";
 
+    private static final String REBOOT_OPTION_KEY = "reboot_option";
+    private static final String REBOOT_OPTION_PROPERTY = "persist.sys.clean.reboot_option";
+    private static final String REBOOT_OPTION_DEFAULT = "0";
+    private static final String REBOOT_SETTINGS_PROPERTY = "ro.clean.reboot.settings";
+
     private static final String IMMEDIATELY_DESTROY_ACTIVITIES_KEY
             = "immediately_destroy_activities";
     private static final String APP_PROCESS_LIMIT_KEY = "app_process_limit";
@@ -105,6 +110,7 @@ public class DevelopmentSettings extends PreferenceFragment
     private CheckBoxPreference mShowAllANRs;
 
     private ListPreference mRootAccess;
+    private ListPreference mRebootOption;
 
     // To track whether Yes was clicked in the adb warning dialog
     private boolean mOkClicked;
@@ -151,6 +157,9 @@ public class DevelopmentSettings extends PreferenceFragment
         mRootAccess = (ListPreference) findPreference(ROOT_ACCESS_KEY);
         mRootAccess.setOnPreferenceChangeListener(this);
 
+        mRebootOption = (ListPreference) findPreference(REBOOT_OPTION_KEY);
+        mRebootOption.setOnPreferenceChangeListener(this);
+
         final Preference verifierDeviceIdentifier = findPreference(VERIFIER_DEVICE_IDENTIFIER);
         final PackageManager pm = getActivity().getPackageManager();
         final VerifierDeviceIdentity verifierIndentity = pm.getVerifierDeviceIdentity();
@@ -159,6 +168,7 @@ public class DevelopmentSettings extends PreferenceFragment
         }
 
         removeRootOptions();
+        removeRebootOptions();
         removeHdcpOptionsForProduction();
     }
 
@@ -179,6 +189,16 @@ public class DevelopmentSettings extends PreferenceFragment
             Preference allowRoot = findPreference(ROOT_ACCESS_KEY);
             if (allowRoot != null) {
                 getPreferenceScreen().removePreference(allowRoot);
+            }
+        }
+    }
+
+    private void removeRebootOptions() {
+        String reboot_settings = SystemProperties.get(REBOOT_SETTINGS_PROPERTY, "");
+        if (!"1".equals(reboot_settings)) {
+            Preference allowReboot = findPreference(REBOOT_OPTION_KEY);
+            if (allowReboot != null) {
+                getPreferenceScreen().removePreference(allowReboot);
             }
         }
     }
@@ -207,6 +227,7 @@ public class DevelopmentSettings extends PreferenceFragment
         updateAppProcessLimitOptions();
         updateShowAllANRsOptions();
         updateRootAccessOptions();
+        updateRebootOptionOptions();
     }
 
     private void updateHdcpValues() {
@@ -291,6 +312,12 @@ public class DevelopmentSettings extends PreferenceFragment
         mRootAccess.setSummary(getResources().getStringArray(R.array.root_access_entries)[Integer.valueOf(value)]);
     }
 
+    private void updateRebootOptionOptions() {
+        String value = SystemProperties.get(REBOOT_OPTION_PROPERTY, REBOOT_OPTION_DEFAULT);
+        mRebootOption.setValue(value);
+        mRebootOption.setSummary(getResources().getStringArray(r.array.reboot_option_entries)[Integer.valueOf(value)]);
+    }
+
     private void writeRootAccessOptions(Object newValue) {
         String oldValue = SystemProperties.get(ROOT_ACCESS_PROPERTY, ROOT_ACCESS_DEFAULT);
         SystemProperties.set(ROOT_ACCESS_PROPERTY, newValue.toString());
@@ -304,6 +331,12 @@ public class DevelopmentSettings extends PreferenceFragment
                 Settings.Secure.ADB_ENABLED, 1);
         }
         updateRootAccessOptions();
+    }
+
+    private void writeRebootOptionOptions(Object newValue) {
+        String oldValue = SystemProperties.get(REBOOT_OPTION_PROPERTY, REBOOT_OPTION_DEFAULT);
+        SystemProperties.set(REBOOT_OPTION_PROPERTY, newValue.toString());
+        updateRebootOptionOptions();
     }
 
     private void updateFlingerOptions() {
@@ -543,6 +576,10 @@ public class DevelopmentSettings extends PreferenceFragment
             } else {
                 writeRootAccessOptions(newValue);
             }
+            return true;
+        }
+        else if (preference == mRebootOption) {
+            writeRebootOptionOptions(value);
             return true;
         }
         return false;
