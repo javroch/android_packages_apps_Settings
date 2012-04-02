@@ -72,9 +72,9 @@ public class DevelopmentSettings extends PreferenceFragment
     private static final String TRANSITION_ANIMATION_SCALE_KEY = "transition_animation_scale";
 
     private static final String ROOT_ACCESS_KEY = "root_access";
-    private static final String ROOT_ACCESS_PROPERTY = "persist.sys.root_access";
+    private static final String ROOT_ACCESS_PROPERTY = "persist.sys.clean.root";
     private static final String ROOT_ACCESS_DEFAULT = "0";
-    private static final String ROOT_SETTINGS_PROPERTY = "ro.root.settings";
+    private static final String ROOT_SETTINGS_PROPERTY = "ro.clean.root";
 
     private static final String REBOOT_OPTION_KEY = "reboot_option";
     private static final String REBOOT_OPTION_PROPERTY = "persist.sys.clean.reboot";
