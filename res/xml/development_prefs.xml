@@ -29,6 +29,13 @@
         android:entries="@array/root_access_entries"
         android:entryValues="@array/root_access_values" />
 
+    <ListPreference
+        android:key="reboot_option"
+        android:title="@string/reboot_option"
+        android:persistent="false"
+        android:entries="@array/reboot_option_entries"
+        android:entryValues="@array/reboot_option_values" />
+
     <Preference
         android:key="verifier_device_identifier"
         style="?android:attr/preferenceInformationStyle"
