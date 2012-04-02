@@ -77,9 +77,9 @@ public class DevelopmentSettings extends PreferenceFragment
     private static final String ROOT_SETTINGS_PROPERTY = "ro.root.settings";
 
     private static final String REBOOT_OPTION_KEY = "reboot_option";
-    private static final String REBOOT_OPTION_PROPERTY = "persist.sys.clean.reboot_option";
+    private static final String REBOOT_OPTION_PROPERTY = "persist.sys.clean.reboot";
     private static final String REBOOT_OPTION_DEFAULT = "0";
-    private static final String REBOOT_SETTINGS_PROPERTY = "ro.clean.reboot.settings";
+    private static final String REBOOT_SETTINGS_PROPERTY = "ro.clean.reboot";
 
     private static final String IMMEDIATELY_DESTROY_ACTIVITIES_KEY
             = "immediately_destroy_activities";
