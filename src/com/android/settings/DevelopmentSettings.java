@@ -71,11 +71,6 @@ public class DevelopmentSettings extends PreferenceFragment
     private static final String WINDOW_ANIMATION_SCALE_KEY = "window_animation_scale";
     private static final String TRANSITION_ANIMATION_SCALE_KEY = "transition_animation_scale";
 
-    private static final String ROOT_ACCESS_KEY = "root_access";
-    private static final String ROOT_ACCESS_PROPERTY = "persist.sys.clean.root";
-    private static final String ROOT_ACCESS_DEFAULT = "0";
-    private static final String ROOT_SETTINGS_PROPERTY = "ro.clean.root";
-
     private static final String REBOOT_OPTION_KEY = "reboot_option";
     private static final String REBOOT_OPTION_PROPERTY = "persist.sys.clean.reboot";
     private static final String REBOOT_OPTION_DEFAULT = "1";
@@ -114,7 +109,6 @@ public class DevelopmentSettings extends PreferenceFragment
 
     private CheckBoxPreference mShowAllANRs;
 
-    private ListPreference mRootAccess;
     private ListPreference mRebootOption;
     private CheckBoxPreference mScreenshotOption;
 
@@ -124,7 +118,6 @@ public class DevelopmentSettings extends PreferenceFragment
     private Dialog mOkDialog;
 
     private String mCurrentDialog;
-    private Object mSelectedRootValue;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -160,9 +153,6 @@ public class DevelopmentSettings extends PreferenceFragment
         mShowAllANRs = (CheckBoxPreference) findPreference(
                 SHOW_ALL_ANRS_KEY);
 
-        mRootAccess = (ListPreference) findPreference(ROOT_ACCESS_KEY);
-        mRootAccess.setOnPreferenceChangeListener(this);
-
         mRebootOption = (ListPreference) findPreference(REBOOT_OPTION_KEY);
         mRebootOption.setOnPreferenceChangeListener(this);
 
@@ -175,7 +165,6 @@ public class DevelopmentSettings extends PreferenceFragment
             verifierDeviceIdentifier.setSummary(verifierIndentity.toString());
         }
 
-        removeRootOptions();
         removeRebootOptions();
         removeScreenshotOptions();
         removeHdcpOptionsForProduction();
@@ -187,17 +176,6 @@ public class DevelopmentSettings extends PreferenceFragment
             if (hdcpChecking != null) {
                 // Remove the preference
                 getPreferenceScreen().removePreference(hdcpChecking);
-            }
-        }
-    }
-
-    private void removeRootOptions() {
-        // user builds don't get root, eng builds always do, only include the setting if we want it there
-        String root_settings = SystemProperties.get(ROOT_SETTINGS_PROPERTY, "");
-        if (!Build.IS_DEBUGGABLE || "eng".equals(Build.TYPE) || !"1".equals(root_settings)) {
-            Preference allowRoot = findPreference(ROOT_ACCESS_KEY);
-            if (allowRoot != null) {
-                getPreferenceScreen().removePreference(allowRoot);
             }
         }
     }
@@ -245,7 +223,6 @@ public class DevelopmentSettings extends PreferenceFragment
         updateImmediatelyDestroyActivitiesOptions();
         updateAppProcessLimitOptions();
         updateShowAllANRsOptions();
-        updateRootAccessOptions();
         updateRebootOptionOptions();
         updateScreenshotOptionOptions();
     }
@@ -326,12 +303,6 @@ public class DevelopmentSettings extends PreferenceFragment
                 Settings.System.SHOW_TOUCHES, 0) != 0);
     }
 
-    private void updateRootAccessOptions() {
-        String value = SystemProperties.get(ROOT_ACCESS_PROPERTY, ROOT_ACCESS_DEFAULT);
-        mRootAccess.setValue(value);
-        mRootAccess.setSummary(getResources().getStringArray(R.array.root_access_entries)[Integer.valueOf(value)]);
-    }
-
     private void updateRebootOptionOptions() {
         String value = SystemProperties.get(REBOOT_OPTION_PROPERTY, REBOOT_OPTION_DEFAULT);
         mRebootOption.setValue(value);
@@ -341,21 +312,6 @@ public class DevelopmentSettings extends PreferenceFragment
     private void updateScreenshotOptionOptions() {
         String value = SystemProperties.get(SCREENSHOT_OPTION_PROPERTY, SCREENSHOT_OPTION_DEFAULT);
         mScreenshotOption.setChecked(Boolean.parseBoolean(value));
-    }
-
-    private void writeRootAccessOptions(Object newValue) {
-        String oldValue = SystemProperties.get(ROOT_ACCESS_PROPERTY, ROOT_ACCESS_DEFAULT);
-        SystemProperties.set(ROOT_ACCESS_PROPERTY, newValue.toString());
-        if (Integer.valueOf(newValue.toString()) < 2 && !oldValue.equals(newValue)
-            && "1".equals(SystemProperties.get("service.adb.root", "0"))) {
-
-            SystemProperties.set("service.adb.root", "0");
-            Settings.Secure.putInt(getActivity().getContentResolver(),
-                Settings.Secure.ADB_ENABLED, 0);
-            Settings.Secure.putInt(getActivity().getContentResolver(),
-                Settings.Secure.ADB_ENABLED, 1);
-        }
-        updateRootAccessOptions();
     }
 
     private void writeRebootOptionOptions(Object newValue) {
@@ -588,28 +544,7 @@ public class DevelopmentSettings extends PreferenceFragment
         } else if (preference == mAppProcessLimit) {
             writeAppProcessLimitOptions(newValue);
             return true;
-        } else if (preference == mRootAccess) {
-            if ("0".equals(SystemProperties.get(ROOT_ACCESS_PROPERTY, ROOT_ACCESS_DEFAULT))
-                && !"0".equals(newValue)) {
-
-                mSelectedRootValue = newValue;
-                mOkClicked = false;
-                if (mOkDialog != null) dismissDialog();
-                mOkDialog = new AlertDialog.Builder(getActivity()).setMessage(
-                    getResources().getString(R.string.root_access_warning_message))
-                    .setTitle(R.string.root_access_warning_title)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(android.R.string.yes, this)
-                    .setNegativeButton(android.R.string.no, this)
-                    .show();
-                mCurrentDialog = ROOT_ACCESS_KEY;
-                mOkDialog.setOnDismissListener(this);
-            } else {
-                writeRootAccessOptions(newValue);
-            }
-            return true;
-        }
-        else if (preference == mRebootOption) {
+        } else if (preference == mRebootOption) {
             writeRebootOptionOptions(newValue);
             return true;
         }
@@ -628,15 +563,11 @@ public class DevelopmentSettings extends PreferenceFragment
             if (mCurrentDialog.equals(ENABLE_ADB)) {
                 Settings.Secure.putInt(getActivity().getContentResolver(),
                         Settings.Secure.ADB_ENABLED, 1);
-            } else if (mCurrentDialog.equals(ROOT_ACCESS_KEY)) {
-                writeRootAccessOptions(mSelectedRootValue);
             }
         } else {
             if (mCurrentDialog.equals(ENABLE_ADB)) {
                 // Reset the toggle
                 mEnableAdb.setChecked(false);
-            } else if (mCurrentDialog.equals(ROOT_ACCESS_KEY)) {
-                writeRootAccessOptions("0");
             }
         }
     }
@@ -646,8 +577,6 @@ public class DevelopmentSettings extends PreferenceFragment
         if (!mOkClicked) {
             if (mCurrentDialog.equals(ENABLE_ADB)) {
                 mEnableAdb.setChecked(false);
-            } else if (mCurrentDialog.equals(ROOT_ACCESS_KEY)) {
-                mRootAccess.setValue("0");
             }
         }
     }

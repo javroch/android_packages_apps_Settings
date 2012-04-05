@@ -175,6 +175,17 @@
         android:icon="@drawable/ic_settings_development"
         android:title="@string/development_settings_title" />
 
+    <!-- Clean AOSP -->
+    <header
+        android:id="@+id/clean_settings"
+        android:icon="@drawable/ic_settings_development"
+        android:title="@string/clean_settings_title">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetPackage="com.javroch.cleanoptions"
+            android:targetClass="com.javroch.cleanoptions.CleanSettingsActivity" />
+    </header>
+
     <!-- About Device -->
     <header
         android:id="@+id/about_settings"
