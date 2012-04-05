@@ -71,11 +71,6 @@ public class DevelopmentSettings extends PreferenceFragment
     private static final String WINDOW_ANIMATION_SCALE_KEY = "window_animation_scale";
     private static final String TRANSITION_ANIMATION_SCALE_KEY = "transition_animation_scale";
 
-    private static final String REBOOT_OPTION_KEY = "reboot_option";
-    private static final String REBOOT_OPTION_PROPERTY = "persist.sys.clean.reboot";
-    private static final String REBOOT_OPTION_DEFAULT = "1";
-    private static final String REBOOT_SETTINGS_PROPERTY = "ro.clean.reboot";
-
     private static final String SCREENSHOT_OPTION_KEY = "screenshot_option";
     private static final String SCREENSHOT_OPTION_DEFAULT = "true";
     private static final String SCREENSHOT_OPTION_PROPERTY = "persist.sys.clean.screenshot";
@@ -109,7 +104,6 @@ public class DevelopmentSettings extends PreferenceFragment
 
     private CheckBoxPreference mShowAllANRs;
 
-    private ListPreference mRebootOption;
     private CheckBoxPreference mScreenshotOption;
 
     // To track whether Yes was clicked in the adb warning dialog
@@ -153,9 +147,6 @@ public class DevelopmentSettings extends PreferenceFragment
         mShowAllANRs = (CheckBoxPreference) findPreference(
                 SHOW_ALL_ANRS_KEY);
 
-        mRebootOption = (ListPreference) findPreference(REBOOT_OPTION_KEY);
-        mRebootOption.setOnPreferenceChangeListener(this);
-
         mScreenshotOption = (CheckBoxPreference) findPreference(SCREENSHOT_OPTION_KEY);
 
         final Preference verifierDeviceIdentifier = findPreference(VERIFIER_DEVICE_IDENTIFIER);
@@ -165,7 +156,6 @@ public class DevelopmentSettings extends PreferenceFragment
             verifierDeviceIdentifier.setSummary(verifierIndentity.toString());
         }
 
-        removeRebootOptions();
         removeScreenshotOptions();
         removeHdcpOptionsForProduction();
     }
@@ -176,16 +166,6 @@ public class DevelopmentSettings extends PreferenceFragment
             if (hdcpChecking != null) {
                 // Remove the preference
                 getPreferenceScreen().removePreference(hdcpChecking);
-            }
-        }
-    }
-
-    private void removeRebootOptions() {
-        String reboot_settings = SystemProperties.get(REBOOT_SETTINGS_PROPERTY, "");
-        if (!"1".equals(reboot_settings)) {
-            Preference allowReboot = findPreference(REBOOT_OPTION_KEY);
-            if (allowReboot != null) {
-                getPreferenceScreen().removePreference(allowReboot);
             }
         }
     }
@@ -223,7 +203,6 @@ public class DevelopmentSettings extends PreferenceFragment
         updateImmediatelyDestroyActivitiesOptions();
         updateAppProcessLimitOptions();
         updateShowAllANRsOptions();
-        updateRebootOptionOptions();
         updateScreenshotOptionOptions();
     }
 
@@ -303,20 +282,9 @@ public class DevelopmentSettings extends PreferenceFragment
                 Settings.System.SHOW_TOUCHES, 0) != 0);
     }
 
-    private void updateRebootOptionOptions() {
-        String value = SystemProperties.get(REBOOT_OPTION_PROPERTY, REBOOT_OPTION_DEFAULT);
-        mRebootOption.setValue(value);
-        mRebootOption.setSummary(getResources().getStringArray(R.array.reboot_option_entries)[Integer.valueOf(value)]);
-    }
-
     private void updateScreenshotOptionOptions() {
         String value = SystemProperties.get(SCREENSHOT_OPTION_PROPERTY, SCREENSHOT_OPTION_DEFAULT);
         mScreenshotOption.setChecked(Boolean.parseBoolean(value));
-    }
-
-    private void writeRebootOptionOptions(Object newValue) {
-        SystemProperties.set(REBOOT_OPTION_PROPERTY, newValue.toString());
-        updateRebootOptionOptions();
     }
 
     private void writeScreenshotOptionOptions() {
@@ -543,9 +511,6 @@ public class DevelopmentSettings extends PreferenceFragment
             return true;
         } else if (preference == mAppProcessLimit) {
             writeAppProcessLimitOptions(newValue);
-            return true;
-        } else if (preference == mRebootOption) {
-            writeRebootOptionOptions(newValue);
             return true;
         }
         return false;
