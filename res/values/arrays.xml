@@ -707,32 +707,4 @@
         <!-- Status message when VPN is failed. -->
         <item>Unsuccessful</item>
     </string-array>
-
-    <!-- Arrays for root access capability -->
-    <string-array name="root_access_entries">
-        <item>@string/root_access_none</item>
-        <item>@string/root_access_apps</item>
-        <item>@string/root_access_adb</item>
-        <item>@string/root_access_all</item>
-    </string-array>
-
-    <string-array name="root_access_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-
-    <!-- Arrays for reboot option capability -->
-    <string-array name="reboot_option_entries">
-        <item>@string/reboot_option_none</item>
-        <item>@string/reboot_option_button</item>
-        <item>@string/reboot_option_menu</item>
-    </string-array>
-
-    <string-array name="reboot_option_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
 </resources>
