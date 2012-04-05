@@ -28,6 +28,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.os.SystemProperties;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
@@ -67,6 +68,8 @@ public class Settings extends PreferenceActivity implements ButtonBarHandler {
 
     private static final String SAVE_KEY_CURRENT_HEADER = "com.android.settings.CURRENT_HEADER";
     private static final String SAVE_KEY_PARENT_HEADER = "com.android.settings.PARENT_HEADER";
+    
+    private static final String CLEAN_SETTINGS_PROPERTY = "ro.clean.settings";
 
     private String mFragmentClass;
     private int mTopLevelHeaderId;
@@ -335,6 +338,12 @@ public class Settings extends PreferenceActivity implements ButtonBarHandler {
                 if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)) {
                     target.remove(header);
                 }
+            } else if (id == R.id.clean_settings) {
+            	// Remove clean settings if ro.clean.settings not set
+            	String cleanSettings = SystemProperties.get(CLEAN_SETTINGS_PROPERTY);
+            	if (!"1".equals(cleanSettings)) {
+            		target.remove(header);
+            	}
             }
 
             // Increment if the current one wasn't removed by the Utils code.
