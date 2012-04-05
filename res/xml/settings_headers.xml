@@ -178,7 +178,7 @@
     <!-- Clean AOSP -->
     <header
         android:id="@+id/clean_settings"
-        android:icon="@drawable/ic_settings_development"
+        android:icon="@drawable/ic_settings_clean"
         android:title="@string/clean_settings_title">
         <intent
             android:action="android.intent.action.MAIN"
