@@ -22,11 +22,6 @@
         android:title="@string/enable_adb" 
         android:summary="@string/enable_adb_summary"/>
 
-    <CheckBoxPreference
-        android:key="screenshot_option"
-        android:title="@string/screenshot_option"
-        android:persistent="false" />
-
     <Preference
         android:key="verifier_device_identifier"
         style="?android:attr/preferenceInformationStyle"

@@ -71,11 +71,6 @@ public class DevelopmentSettings extends PreferenceFragment
     private static final String WINDOW_ANIMATION_SCALE_KEY = "window_animation_scale";
     private static final String TRANSITION_ANIMATION_SCALE_KEY = "transition_animation_scale";
 
-    private static final String SCREENSHOT_OPTION_KEY = "screenshot_option";
-    private static final String SCREENSHOT_OPTION_DEFAULT = "true";
-    private static final String SCREENSHOT_OPTION_PROPERTY = "persist.sys.clean.screenshot";
-    private static final String SCREENSHOT_SETTINGS_PROPERTY = "ro.clean.screenshot";
-
     private static final String IMMEDIATELY_DESTROY_ACTIVITIES_KEY
             = "immediately_destroy_activities";
     private static final String APP_PROCESS_LIMIT_KEY = "app_process_limit";
@@ -103,8 +98,6 @@ public class DevelopmentSettings extends PreferenceFragment
     private ListPreference mAppProcessLimit;
 
     private CheckBoxPreference mShowAllANRs;
-
-    private CheckBoxPreference mScreenshotOption;
 
     // To track whether Yes was clicked in the adb warning dialog
     private boolean mOkClicked;
@@ -147,8 +140,6 @@ public class DevelopmentSettings extends PreferenceFragment
         mShowAllANRs = (CheckBoxPreference) findPreference(
                 SHOW_ALL_ANRS_KEY);
 
-        mScreenshotOption = (CheckBoxPreference) findPreference(SCREENSHOT_OPTION_KEY);
-
         final Preference verifierDeviceIdentifier = findPreference(VERIFIER_DEVICE_IDENTIFIER);
         final PackageManager pm = getActivity().getPackageManager();
         final VerifierDeviceIdentity verifierIndentity = pm.getVerifierDeviceIdentity();
@@ -156,7 +147,6 @@ public class DevelopmentSettings extends PreferenceFragment
             verifierDeviceIdentifier.setSummary(verifierIndentity.toString());
         }
 
-        removeScreenshotOptions();
         removeHdcpOptionsForProduction();
     }
 
@@ -166,16 +156,6 @@ public class DevelopmentSettings extends PreferenceFragment
             if (hdcpChecking != null) {
                 // Remove the preference
                 getPreferenceScreen().removePreference(hdcpChecking);
-            }
-        }
-    }
-
-    private void removeScreenshotOptions() {
-        String screenshot_settings = SystemProperties.get(SCREENSHOT_SETTINGS_PROPERTY, "");
-        if (!"1".equals(screenshot_settings)) {
-            Preference allowScreenshot = findPreference(SCREENSHOT_OPTION_KEY);
-            if (allowScreenshot != null) {
-                getPreferenceScreen().removePreference(allowScreenshot);
             }
         }
     }
@@ -203,7 +183,6 @@ public class DevelopmentSettings extends PreferenceFragment
         updateImmediatelyDestroyActivitiesOptions();
         updateAppProcessLimitOptions();
         updateShowAllANRsOptions();
-        updateScreenshotOptionOptions();
     }
 
     private void updateHdcpValues() {
@@ -280,16 +259,6 @@ public class DevelopmentSettings extends PreferenceFragment
     private void updateShowTouchesOptions() {
         mShowTouches.setChecked(Settings.System.getInt(getActivity().getContentResolver(),
                 Settings.System.SHOW_TOUCHES, 0) != 0);
-    }
-
-    private void updateScreenshotOptionOptions() {
-        String value = SystemProperties.get(SCREENSHOT_OPTION_PROPERTY, SCREENSHOT_OPTION_DEFAULT);
-        mScreenshotOption.setChecked(Boolean.parseBoolean(value));
-    }
-
-    private void writeScreenshotOptionOptions() {
-        SystemProperties.set(SCREENSHOT_OPTION_PROPERTY, mScreenshotOption.isChecked() ? "true" : "false");
-        updateScreenshotOptionOptions();
     }
 
     private void updateFlingerOptions() {
@@ -490,8 +459,6 @@ public class DevelopmentSettings extends PreferenceFragment
             writeShowAllANRsOptions();
         } else if (preference == mForceHardwareUi) {
             writeHardwareUiOptions();
-        } else if (preference == mScreenshotOption) {
-            writeScreenshotOptionOptions();
         }
 
         return false;

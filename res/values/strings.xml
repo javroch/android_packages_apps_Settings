@@ -3785,7 +3785,4 @@ found in the list of installed apps.</string>
     from their cell phone carrier. The use of the string is similar to the string
     "system_update_settings_list_item_title" in this project. [CHAR LIMIT=25] -->
     <string name="additional_system_update_settings_list_item_title">Additional system updates</string>
-
-    <!-- Setting checkbox title for screenshot option -->
-    <string name="screenshot_option">Screenshot option</string>
 </resources>
