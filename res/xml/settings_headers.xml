@@ -182,8 +182,8 @@
         android:title="@string/clean_settings_title">
         <intent
             android:action="android.intent.action.MAIN"
-            android:targetPackage="com.javroch.cleanoptions"
-            android:targetClass="com.javroch.cleanoptions.CleanSettingsActivity" />
+            android:targetPackage="com.javroch.cleanextras"
+            android:targetClass="com.javroch.cleanextras.CleanSettingsActivity" />
     </header>
 
     <!-- About Device -->
